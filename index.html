@@ -29,7 +29,6 @@ body{
 }
 
 .wrapper{max-width:780px;margin:auto;color:#333}
-
 h1{
   font-family:'Playfair Display',serif;
   font-size:40px;
@@ -76,6 +75,25 @@ section{
   margin-bottom:12px
 }
 
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+  gap:10px;
+  margin-top:12px
+}
+.gallery img{width:100%;border-radius:10px}
+
+textarea{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  min-height:120px;
+  margin-bottom:10px
+}
+
+audio,video{width:100%;border-radius:10px;margin-top:10px}
+
 .open-letter{
   display:block;
   margin:24px auto 10px;
@@ -99,72 +117,75 @@ section{
   box-shadow:0 14px 32px rgba(255,107,129,.45);
 }
 
-textarea{
-  width:100%;
-  padding:12px;
+#inboxList .msg-item{
+  background:#fff;
+  padding:10px;
   border-radius:10px;
-  border:1px solid #ccc;
-  min-height:120px;
   margin-bottom:10px;
-  line-height:1.8; /* ← Add this */
-  font-size:16px;   /* optional, make text a bit bigger */
+  border:1px solid #eee
 }
 
-
-audio,video{width:100%;border-radius:10px;margin-top:10px}
-
-#heartContainer{
-  position:fixed;
-  inset:0;
-  pointer-events:none
+#surpriseMessage{
+  text-align:center;
+  color:#ff4d6d;
+  font-weight:700;
+  margin-top:12px;
+  font-size:16px
 }
 
-/* ================= LOCK SCREEN ================= */
+/* ================= VIDEO LOCK SCREEN ================= */
 .video-lock{
   position:fixed;
   inset:0;
   z-index:9999;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-end; /* move content to bottom */
-  align-items:flex-start;   /* align left */
-  overflow:hidden;
-  padding:24px;
-  background:rgba(0,0,0,.35);
+  overflow:hidden
 }
 .video-lock video{
   position:absolute;
-  top:0;
-  left:0;
+  top:50%;
+  left:50%;
   width:100%;
   height:100%;
   object-fit:cover;
-  z-index:1;
+  transform:translate(-50%, -50%);
 }
 
+/* ===== VIDEO LOCK CONTENT ===== */
 .lock-content{
   position:relative;
   z-index:2;
-  width:100%;
-  max-width:380px;
-  text-align:left;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-end;        /* RIGHT SIDE */
+  background:rgba(0,0,0,.35);
+  padding:24px 6vw 24px 24px;  /* urong from right */
+  text-align:right;
+  max-width:420px;
+  margin-left:auto;            /* push to right */
 }
 
+/* TITLE */
 .lock-content h2{
   font-family:Georgia,serif;
-  font-size:32px;
+  font-size:42px;
   color:#fff;
   margin-bottom:14px;
 }
 
+/* PASSWORD INPUT */
 .lock-content input{
   padding:12px 14px;
   border-radius:10px;
   border:0;
   width:100%;
+  max-width:280px;
   font-size:16px;
+  text-align:center;
 }
 
+/* ENTER BUTTON — CENTERED UNDER INPUT */
 .lock-content button{
   margin-top:14px;
   padding:10px 18px;
@@ -174,37 +195,33 @@ audio,video{width:100%;border-radius:10px;margin-top:10px}
   color:white;
   font-weight:700;
   cursor:pointer;
-  width:100%;
-  text-align:center;
+  align-self:center;           /* 👈 CENTER */
 }
 
+/* ERROR */
 #err{
   color:#fff;
   margin-top:10px;
   display:none;
+  text-align:center;
 }
 
-/* ================= LOGOUT BUTTON ================= */
-#logoutBtn{
-  position:fixed;
-  bottom:24px;
-  left:24px;
-  padding:12px 18px;
-  background:#ff6b81;
-  color:white;
-  border:none;
-  border-radius:10px;
-  font-weight:700;
-  cursor:pointer;
-  z-index:10;
-}
-
-/* ================= MOBILE FIX ================= */
+/* ===== MOBILE FIX ===== */
 @media (max-width:480px){
-  body{padding:12px;}
-  .tiles{grid-template-columns:1fr;}
-  h1{font-size:32px;}
-  .lock-content h2{font-size:28px;}
+  .lock-content{
+    padding:20px 16px;
+    max-width:none;
+    align-items:center;        /* center container on mobile */
+    text-align:center;
+  }
+
+  .lock-content h2{
+    font-size:32px;
+  }
+
+  .lock-content input{
+    max-width:100%;
+  }
 }
 </style>
 </head>
@@ -229,6 +246,20 @@ audio,video{width:100%;border-radius:10px;margin-top:10px}
 <div class="wrapper" id="mainContent">
 
 <h1>Welcome Love 💌</h1>
+<button onclick="logout()" style="
+  position:absolute;
+  top:20px;
+  right:20px;
+  padding:8px 14px;
+  background:#ff6b81;
+  color:white;
+  border:none;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
+">
+  Logout
+</button>
 
 <div class="tiles">
   <div class="tile" onclick="openSection('musicSec')">🎵 Music</div>
@@ -327,9 +358,7 @@ audio,video{width:100%;border-radius:10px;margin-top:10px}
 
 </div>
 
-<div id="heartContainer"></div>
-
-<button id="logoutBtn" onclick="logout()">Logout</button>
+<div id="heartContainer" style="position:fixed;inset:0;pointer-events:none"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -348,6 +377,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+
 const correctPassword="0325";
 
 /* PASSWORD */
@@ -363,7 +393,7 @@ function unlock(){
   }
 }
 
-/* NAVIGATION */
+/* NAV */
 function openSection(id){
   document.querySelectorAll("section").forEach(s=>s.style.display="none");
   document.getElementById(id).style.display="flex";
@@ -390,6 +420,7 @@ function backHomeFromLetter(){
 /* NOTES */
 function saveNotes(){
   localStorage.setItem("love_notes",notes.value);
+  alert("Note saved!");
 }
 notes.value = localStorage.getItem("love_notes") || `😂 Tagalog Jokes for You 😂
 
@@ -429,7 +460,9 @@ function loadInbox() {
 loadInbox();
 
 /* SURPRISE */
-surpriseBtn.onclick=()=>{for(let i=0;i<30;i++)createHeart();}
+surpriseBtn.onclick=()=>{
+  for(let i=0;i<30;i++)createHeart();
+}
 function createHeart(){
   const h=document.createElement("div");
   h.innerHTML="💖";
@@ -439,19 +472,22 @@ function createHeart(){
   h.style.fontSize=Math.random()*24+16+"px";
   h.style.transition="all 3s linear";
   heartContainer.appendChild(h);
-  setTimeout(()=>{h.style.top=Math.random()*innerHeight*.4+"px";h.style.opacity=0;},50);
+  setTimeout(()=>{
+    h.style.top=Math.random()*innerHeight*.4+"px";
+    h.style.opacity=0;
+  },50);
   setTimeout(()=>h.remove(),3000);
 }
 
-/* LOGOUT */
 function logout(){
   const confirmLogout = confirm("Are you sure you want to log out?");
   if(confirmLogout){
     document.getElementById("mainContent").style.display="none";
-    document.getElementById("lockScreen").style.display="flex";
+    document.getElementById("lockScreen").style.display="block";
     document.getElementById("passInput").value="";
   }
 }
+
 </script>
 
 </body>
