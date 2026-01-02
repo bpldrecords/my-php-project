@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Love Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --accent:#ff6b81;
+  --bg1:#fff0f5;
+  --bg2:#fff5f8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:'Poppins',sans-serif;
+  padding:20px;
+  background:linear-gradient(270deg,#fff0f5,#fff5f8,#ffeef6,#fff0f5);
+  background-size:800% 800%;
+  animation:gradientMove 20s ease infinite;
+}
+
+@keyframes gradientMove{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+.wrapper{max-width:780px;margin:auto;color:#333}
+h1{
+  font-family:'Playfair Display',serif;
+  font-size:40px;
+  text-align:center;
+  margin-bottom:18px;
+  color:var(--accent)
+}
+.tiles{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px
+}
+.tile{
+  background:white;
+  border-radius:14px;
+  padding:22px;
+  text-align:center;
+  font-weight:700;
+  font-size:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+  cursor:pointer;
+  transition:transform .18s
+}
+.tile:hover{transform:scale(1.03)}
+
+section{
+  display:none;
+  margin-top:20px;
+  background:rgba(255,255,255,.9);
+  padding:16px;
+  border-radius:12px;
+  flex-direction:column;
+  min-height:300px
+}
+
+.backBtn{
+  background:var(--accent);
+  color:#fff;
+  border:0;
+  padding:8px 12px;
+  border-radius:8px;
+  font-weight:700;
+  cursor:pointer;
+  margin-bottom:12px
+}
+
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+  gap:10px;
+  margin-top:12px
+}
+.gallery img{width:100%;border-radius:10px}
+
+textarea{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  min-height:120px;
+  margin-bottom:10px
+}
+
+audio,video{width:100%;border-radius:10px;margin-top:10px}
+
+.open-letter{
+  display:block;
+  margin:24px auto 10px;
+  padding:14px 22px;
+  background:linear-gradient(135deg,#ff6b81,#ff9a9e);
+  color:#fff;
+  border:0;
+  border-radius:999px;
+  font-family:'Poppins',sans-serif;
+  font-weight:600;
+  font-size:15px;
+  letter-spacing:.5px;
+  cursor:pointer;
+  max-width:360px;
+  box-shadow:0 10px 25px rgba(255,107,129,.35);
+  transition:all .35s ease;
+}
+
+.open-letter:hover{
+  transform:translateY(-2px) scale(1.03);
+  box-shadow:0 14px 32px rgba(255,107,129,.45);
+}
+
+#inboxList .msg-item{
+  background:#fff;
+  padding:10px;
+  border-radius:10px;
+  margin-bottom:10px;
+  border:1px solid #eee
+}
+
+#surpriseMessage{
+  text-align:center;
+  color:#ff4d6d;
+  font-weight:700;
+  margin-top:12px;
+  font-size:16px
+}
+
+/* ================= VIDEO LOCK SCREEN ================= */
+.video-lock{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  overflow:hidden
+}
+.video-lock video{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transform:translate(-50%, -50%);
+}
+
+/* ===== VIDEO LOCK CONTENT ===== */
+.lock-content{
+  position:relative;
+  z-index:2;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-end;        /* RIGHT SIDE */
+  background:rgba(0,0,0,.35);
+  padding:24px 6vw 24px 24px;  /* urong from right */
+  text-align:right;
+  max-width:420px;
+  margin-left:auto;            /* push to right */
+}
+
+/* TITLE */
+.lock-content h2{
+  font-family:Georgia,serif;
+  font-size:42px;
+  color:#fff;
+  margin-bottom:14px;
+}
+
+/* PASSWORD INPUT */
+.lock-content input{
+  padding:12px 14px;
+  border-radius:10px;
+  border:0;
+  width:100%;
+  max-width:280px;
+  font-size:16px;
+  text-align:center;
+}
+
+/* ENTER BUTTON — CENTERED UNDER INPUT */
+.lock-content button{
+  margin-top:14px;
+  padding:10px 18px;
+  border-radius:10px;
+  border:0;
+  background:#ff6b81;
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+  align-self:center;           /* 👈 CENTER */
+}
+
+/* ERROR */
+#err{
+  color:#fff;
+  margin-top:10px;
+  display:none;
+  text-align:center;
+}
+
+/* ===== MOBILE FIX ===== */
+@media (max-width:480px){
+  .lock-content{
+    padding:20px 16px;
+    max-width:none;
+    align-items:center;        /* center container on mobile */
+    text-align:center;
+  }
+
+  .lock-content h2{
+    font-size:32px;
+  }
+
+  .lock-content input{
+    max-width:100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== PASSWORD / WELCOME VIDEO SCREEN ===== -->
+<div id="lockScreen" class="video-lock">
+  <video autoplay muted loop playsinline preload="auto">
+    <source src="Brown and Red Modern Christmas Greetings Video.mp4" type="video/mp4">
+  </video>
+
+  <div class="lock-content">
+    <h2>Welcome ❤️</h2>
+    <input id="passInput" type="password" placeholder="Enter password">
+    <button onclick="unlock()">Enter</button>
+    <p id="err">Wrong password. Try again.</p>
+  </div>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div class="wrapper" id="mainContent">
+
+<h1>Welcome Love 💌</h1>
+<button onclick="logout()" style="
+  position:absolute;
+  top:20px;
+  right:20px;
+  padding:8px 14px;
+  background:#ff6b81;
+  color:white;
+  border:none;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
+">
+  Logout
+</button>
+
+<div class="tiles">
+  <div class="tile" onclick="openSection('musicSec')">🎵 Music</div>
+  <div class="tile" onclick="openSection('gallerySec')">📸 Gallery</div>
+  <div class="tile" onclick="openSection('notesSec')">📝 Notes</div>
+  <div class="tile" onclick="openSection('videoSec')">🎬 Videos</div>
+  <div class="tile" onclick="openSection('messagePage')">💬 Messages</div>
+</div>
+
+<div id="mainButtons" style="text-align:center;margin-top:30px">
+  <button class="open-letter" onclick="openLetter()">💌 Open a Letter</button>
+  <p style="font-size:18px;color:#ff4d6d;font-weight:600;margin:12px 0">
+    “You make my heart do silly flips! ❤️”
+  </p>
+  <button id="surpriseBtn" style="padding:12px 18px;background:#ff6b81;color:white;border:none;border-radius:12px;font-weight:700;cursor:pointer;font-size:16px">
+    🎉 Tap for a Surprise!
+  </button>
+  <div id="surpriseMessage"></div>
+</div>
+
+<!-- ===== LETTER SECTION ===== -->
+<section id="letterSec" style="display:none; text-align:center; margin-top:20px; flex-direction:column; align-items:center;">
+  <button class="backBtn" onclick="backHomeFromLetter()">← Back</button>
+  <img src="Beige Scrapbook Floral Love Letter Poster (1).png" alt="Love Letter" style="max-width:100%; border-radius:12px; margin-top:12px;">
+</section>
+
+<section id="musicSec">
+<button class="backBtn" onclick="backHome()">← Back</button>
+<h2>Music</h2>
+<p><strong>Here With Me</strong></p>
+<audio controls>
+  <source src="d4vd - Here With Me (Lyrics) [bY4kEuki5hM].mp3" type="audio/mpeg">
+</audio>
+<p><strong>Beautiful things</strong></p>
+<audio controls>
+  <source src="Benson Boone - Beautiful Things (Lyrics) [qKOMEWKrvb4].mp3" type="audio/mpeg">
+</audio>
+<p><strong>I love you so</strong></p>
+<audio controls>
+  <source src="The Walters -- I Love You So [NwFVSclD_uc].mp3" type="audio/mpeg">
+</audio>
+<p><strong>Skinny Love</strong></p>
+<audio controls>
+  <source src="birdy - skinny love (lyrics) [0iwTSQxZxqU].mp3" type="audio/mpeg">
+</audio>
+<p><strong>My Place</strong></p>
+<audio controls>
+  <source src="Nelly - My Place [Lyrics] ft. Jaheim [otNn_rgRQfs].mp3" type="audio/mpeg">
+</audio>
+<p><strong>Strawberry & Cigarettes</strong></p>
+<audio controls>
+  <source src="Troye Sivan - Strawberry & Cigarettes (Lyrics) [XTJKSjqmCpk].mp3" type="audio/mpeg">
+</audio>
+</section>
+
+<section id="gallerySec">
+<button class="backBtn" onclick="backHome()">← Back</button>
+<h2>Gallery</h2>
+<div class="gallery">
+  <img src="PHOTO1.png">
+  <img src="PHOTO2.jpg">
+  <img src="PHOTO3.jpg">
+</div>
+</section>
+
+<section id="notesSec">
+<button class="backBtn" onclick="backHome()">← Back</button>
+<h2>Notes</h2>
+<textarea id="notes" placeholder="Write your sweet note..."></textarea>
+</section>
+
+<section id="videoSec">
+<button class="backBtn" onclick="backHome()">← Back</button>
+<h2>Videos</h2>
+
+<p><strong>7 things</strong></p>
+<video controls><source src="Miley_Cyrus_-_7_Things_Lyrics_720P.mp4" type="video/mp4"></video>
+<p><strong>There you'll be</strong></p>
+<video controls><source src="Faith_Hill_-_There_You_ll_Be_Lyrics_720P.mp4" type="video/mp4"></video>
+<p><strong>Still into you</strong></p>
+<video controls><source src="Paramore_-_Still_into_You_Lyrics_720P.mp4" type="video/mp4"></video>
+<p><strong>Born to die</strong></p>
+<video controls><source src="LANA_DEL_REY-_BORN_TO_DIE_1080P.mp4" type="video/mp4"></video>
+</section>
+
+<section id="messagePage">
+<button class="backBtn" onclick="backHome()">← Back</button>
+<h2>📩 Send Me a Message</h2>
+<form id="messageForm">
+<textarea id="msgContent" required placeholder="Type your message here..."></textarea>
+<button type="submit" style="margin-top:10px;width:100%;padding:12px;background:var(--accent);color:white;border:0;border-radius:10px;font-weight:700">Send Message</button>
+</form>
+<h3 style="margin-top:16px">📥 Inbox</h3>
+<div id="inboxList"></div>
+</section>
+
+</div>
+
+<div id="heartContainer" style="position:fixed;inset:0;pointer-events:none"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBpxPjctEqAL9t2y6o4FCmfTh1-ihVsn6A",
+  authDomain: "lovetemp-10178.firebaseapp.com",
+  databaseURL: "https://lovetemp-10178-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "lovetemp-10178",
+  storageBucket: "lovetemp-10178.firebasestorage.app",
+  messagingSenderId: "959519409806",
+  appId: "1:959519409806:web:aa6bbc9cc2eaa35e296bdf",
+  measurementId: "G-QEJ2ZPDZ07"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+const correctPassword="0325";
+
+/* PASSWORD */
+function unlock(){
+  const v=document.getElementById("passInput").value;
+  if(v===correctPassword){
+    document.getElementById("lockScreen").style.display="none";
+    document.getElementById("mainContent").style.display="block";
+  }else{
+    const e=document.getElementById("err");
+    e.style.display="block";
+    setTimeout(()=>e.style.display="none",1800);
+  }
+}
+
+/* NAV */
+function openSection(id){
+  document.querySelectorAll("section").forEach(s=>s.style.display="none");
+  document.getElementById(id).style.display="flex";
+  document.getElementById("mainButtons").style.display="none";
+  scrollTo(0,0);
+}
+function backHome(){
+  document.querySelectorAll("section").forEach(s=>s.style.display="none");
+  document.getElementById("mainButtons").style.display="block";
+}
+
+/* LETTER */
+function openLetter(){
+  document.getElementById("mainButtons").style.display = "none";
+  document.querySelectorAll("section").forEach(s => s.style.display = "none");
+  document.getElementById("letterSec").style.display = "flex";
+  scrollTo(0,0);
+}
+function backHomeFromLetter(){
+  document.getElementById("letterSec").style.display = "none";
+  document.getElementById("mainButtons").style.display = "block";
+}
+
+/* NOTES */
+function saveNotes(){
+  localStorage.setItem("love_notes",notes.value);
+  alert("Note saved!");
+}
+notes.value = localStorage.getItem("love_notes") || `😂 Tagalog Jokes for You 😂
+
+1. Anong isda ang mahilig sa gatas? Milkfish! 🐟
+2. Anong tawag sa matalinong kalabaw? Brainabaw! 🐃
+3. Bakit hindi marunong magtago ang computer? Kasi laging may cache! 💻
+4. Anong hayop ang hindi mahilig sa party? Kamingaw 🐒
+5. Bakit hindi pwedeng magtago ang itlog? Kasi eggspose agad! 🥚
+`;
+
+/* MESSAGES */
+const form = document.getElementById("messageForm");
+form.addEventListener("submit", e => {
+  e.preventDefault();
+  const message = msgContent.value.trim();
+  if(message === "") return;
+
+  const newMsgRef = db.ref("messages").push();
+  newMsgRef.set({
+    message: message,
+    time: new Date().toLocaleString()
+  });
+
+  msgContent.value = "";
+});
+
+function loadInbox() {
+  inboxList.innerHTML = "";
+  db.ref("messages").orderByChild("time").limitToLast(50).on("value", snapshot => {
+    inboxList.innerHTML = "";
+    snapshot.forEach(child => {
+      const m = child.val();
+      inboxList.innerHTML = `<div class="msg-item"><small>${m.time}</small><p>${m.message}</p></div>` + inboxList.innerHTML;
+    });
+  });
+}
+loadInbox();
+
+/* SURPRISE */
+surpriseBtn.onclick=()=>{
+  for(let i=0;i<30;i++)createHeart();
+}
+function createHeart(){
+  const h=document.createElement("div");
+  h.innerHTML="💖";
+  h.style.position="absolute";
+  h.style.left=Math.random()*innerWidth+"px";
+  h.style.top=innerHeight+"px";
+  h.style.fontSize=Math.random()*24+16+"px";
+  h.style.transition="all 3s linear";
+  heartContainer.appendChild(h);
+  setTimeout(()=>{
+    h.style.top=Math.random()*innerHeight*.4+"px";
+    h.style.opacity=0;
+  },50);
+  setTimeout(()=>h.remove(),3000);
+}
+
+function logout(){
+  const confirmLogout = confirm("Are you sure you want to log out?");
+  if(confirmLogout){
+    document.getElementById("mainContent").style.display="none";
+    document.getElementById("lockScreen").style.display="block";
+    document.getElementById("passInput").value="";
+  }
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Love Template — Media & Interactive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --accent: #ff6b81;
+      --bg1:#ff9a9e; --bg2:#fecfef;
+    }
+    *{box-sizing:border-box}
+    body {
+      margin:0;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      padding:20px;
+    }
+    .wrapper {
+      max-width: 760px;
+      margin: auto;
+      background: rgba(255,255,255,0.75);
+      padding:20px;
+      border-radius:16px;
+      backdrop-filter: blur(6px);
+    }
+    h1 {
+      color: var(--accent);
+      font-family: 'Great Vibes', cursive;
+      font-size: 38px;
+      text-align:center;
+    }
+    section {margin-top:24px;}
+    .title {font-weight:600;margin-bottom:6px;color:#444;font-size:18px;}
+
+    /* GALLERY */
+    .gallery {
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px,1fr));
+      gap:8px;
+    }
+    .gallery img {
+      width:100%;border-radius:10px;
+    }
+
+    /* CHAT */
+    .chat-box {
+      background:white;border-radius:12px;
+      padding:12px;height:200px;
+      overflow-y:auto;border:1px solid #eee;
+    }
+    .msg {padding:8px 10px;margin:6px 0;border-radius:8px;max-width:80%;}
+    .me {background:#ffe6ea;margin-left:auto;}
+    .other {background:#e9f3ff;margin-right:auto;}
+    .chat-input {display:flex;gap:6px;margin-top:10px;}
+    .chat-input input {
+      flex:1;padding:10px;border-radius:8px;border:1px solid #ccc;
+    }
+    .chat-input button {
+      padding:10px 14px;border:0;background:var(--accent);
+      color:white;border-radius:8px;font-weight:600;
+    }
+    audio, video {
+      width:100%;border-radius:12px;margin-top:10px;
+    }
+    textarea {
+      width:100%;padding:12px;border-radius:10px;border:1px solid #ccc;
+      min-height:100px;font-size:15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <h1>My Love Space</h1>
+
+    <!-- MUSIC -->
+    <section>
+      <div class="title">🎵 Music</div>
+      <p>You can add your own MP3 file here.</p>
+      <audio controls>
+        <source src="music.mp3" type="audio/mpeg">
+      </audio>
+    </section>
+
+    <!-- GALLERY -->
+    <section>
+      <div class="title">📸 Photo Gallery</div>
+      <div class="gallery">
+        <img src="img1.jpg">
+        <img src="img2.jpg">
+        <img src="img3.jpg">
+      </div>
+    </section>
+
+    <!-- VIDEO -->
+    <section>
+      <div class="title">🎥 Video</div>
+      <video controls>
+        <source src="video.mp4" type="video/mp4">
+      </video>
+    </section>
+
+    <!-- NOTES -->
+    <section>
+      <div class="title">📝 Notes</div>
+      <textarea id="notes" placeholder="Write something sweet..."></textarea>
+      <button onclick="saveNotes()" style="margin-top:8px;padding:10px 14px;border:0;background:var(--accent);color:white;border-radius:8px;font-weight:600;">Save Note</button>
+    </section>
+
+    <!-- CHAT -->
+    <section>
+      <div class="title">💬 Interactive Messages</div>
+      <div class="chat-box" id="chat"></div>
+      <div class="chat-input">
+        <input id="msgInput" placeholder="Type a message..." />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // NOTES SAVE
+    function saveNotes(){
+      localStorage.setItem('loveNotes', document.getElementById('notes').value);
+      alert('Note saved!');
+    }
+    if(localStorage.getItem('loveNotes')){
+      document.getElementById('notes').value = localStorage.getItem('loveNotes');
+    }
+
+    // CHAT SYSTEM
+    function sendMessage(){
+      const input = document.getElementById('msgInput');
+      if(!input.value.trim()) return;
+
+      const box = document.getElementById('chat');
+      const div = document.createElement('div');
+      div.className = 'msg me';
+      div.textContent = input.value;
+      box.appendChild(div);
+
+      box.scrollTop = box.scrollHeight;
+      input.value = '';
+      autoReply();
+    }
+
+    function autoReply(){
+      setTimeout(()=>{
+        const box = document.getElementById('chat');
+        const reply = document.createElement('div');
+        reply.className = 'msg other';
+        reply.textContent = "❤️ Love received!";
+        box.appendChild(reply);
+        box.scrollTop = box.scrollHeight;
+      },700);
+    }
+  </script>
+</body>
+</html>
